@@ -1,0 +1,83 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/docker-in-docker
+{
+	"name": "Atomic CRM",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "ghcr.io/apex-nerd-labs/devcontainer:multistage",
+	"containerEnv": {
+		"OP_SERVICE_ACCOUNT_TOKEN": "${localEnv:OP_SERVICE_ACCOUNT_TOKEN}",
+		"PYTHONDONTWRITEBYTECODE": "1",
+		"UV_LINK_MODE": "copy",
+		"GOOS": "linux",
+		"GOARCH": "${localEnv:GOARCH:arm64}",
+		"DISPLAY": "host.docker.internal:0",
+		"DEPOT_API_TOKEN": "${localEnv:DEPOT_API_TOKEN}",
+		"DEPOT_PROJECT_ID": "${localEnv:DEPOT_PROJECT_ID}",
+		"CODEX_HOME": "/workspace/.codex",
+		"KUBECONFIG": "/workspace/.kube/talosconfig",
+		"CLAUDE_CONFIG_DIR": "/workspace/.claude",
+		"SENTENCE_TRANSFORMERS_HOME": "/workspace/.cache/sentence_transformers",
+		"SPACY_HOME": "/workspace/.cache/spacy",
+		"ENABLE_LSP_TOOL": "1",
+		"GITHUB_PERSONAL_ACCESS_TOKEN": "${localEnv:GITHUB_TOKEN}",
+		"OPENFANG_HOME": "/workspace/.openfang",
+		"TELEGRAM_BOT_TOKEN": "${localEnv:TELEGRAM_BOT_TOKEN}"
+	},
+	"runArgs": [
+		"--init",
+		"--label=dev.orbstack.domains=crm.local"
+	],
+	"workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
+	// "mounts": [
+	// 	"source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+	// ],
+	"workspaceFolder": "/workspace",
+	"postStartCommand": "sudo chmod 666 /var/run/docker.sock || true && echo 'alias clauded=claude --dangerously-skip-permissions' >> ~/.zshrc",
+	"userEnvProbe": "loginInteractiveShell",
+	"features": {
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"1password.1password",
+				"ms-vscode-remote.remote-containers",
+				"mikestead.dotenv",
+				"tamasfe.even-better-toml",
+				"GitHub.copilot",
+				"Github.copilot-chat",
+				"GitHub.vscode-pull-request-github",
+				"github.vscode-github-actions",
+				"philnash.ngrok-for-vscode",
+				"ms-vscode-remote.remote-ssh",
+				"ms-vscode-remote.remote-ssh-edit",
+				"ms-vscode-remote.remote-ssh-explorer",
+				"ms-vscode-remote.vscode-remote-extensionpack",
+				"ms-azuretools.vscode-docker",
+				"VisualStudioExptTeam.vscodeintellicode",
+				"VisualStudioExptTeam.intellicode-api-usage-examples",
+				"esbenp.prettier-vscode",
+				"redhat.vscode-yaml",
+				"Postman.postman-for-vscode",
+				"ms-vscode.vscode-typescript-next",
+				"arcanis.vscode-zipfs",
+				"mindaro.mindaro",
+				"Prisma.prisma",
+				"postcss.postcss",
+				"charliermarsh.ruff",
+				"bradlc.vscode-tailwindcss",
+				"samuelcolvin.jinjahtml",
+				"teticio.python-envy",
+				"ms-vscode.makefile-tools",
+				"anysphere.remote-containers",
+				"golang.go",
+				"ms-playwright.playwright",
+				"sweetpad.sweetpad",
+				"openai.chatgpt",
+				"ms-python.debugpy",
+				"ms-python.python"
+			]
+		}
+	},
+	"containerUser": "dev"
+}
