@@ -1,192 +1,133 @@
-# AGENTS.md
+# Project Instructions
 
-## Project Overview
+## Rules for Using shadcn MCP server
 
-Atomic CRM is a full-featured CRM built with React, shadcn-admin-kit, and Supabase. It provides contact management, task tracking, notes, email capture, and deal management with a Kanban board.
+1. **Always Check Registry First**
+   - Before creating custom components, search the registries for existing solutions
+   - Use `mcp_shadcn_search_items_in_registries` to find relevant components
+   - Check `mcp_shadcn_list_items_in_registries` to see all available options
 
-## Development Commands
+2. **Component Discovery Workflow**
+   - Start with semantic search using `mcp_shadcn_search_items_in_registries`
+   - View detailed component info with `mcp_shadcn_view_items_in_registries`
+   - Get usage examples with `mcp_shadcn_get_item_examples_from_registries`
+   - Use `mcp_shadcn_get_add_command_for_items` to get installation commands
 
-### Setup
+3. **Component Installation**
+   - Use the provided add commands from the registry
+   - Ensure components are properly imported and configured
+   - Do not install example- components directly, use them as reference to create your components.
+   - Follow the component's usage examples for proper implementation
+   - Do not overwrite ui or registry/ui components unless the user has specifically asked for it
+
+## Rules for using the shadcn-admin-kit registry
+
+- The shadcn-admin-kit registry mainly consists of a single block component called `admin`, which will install the `<Admin>` component along with all the necessary components to create an admin (such as `<List>`, `<Edit>`, `<DataTable>`, `<TextField>`, `<TextInput>`, etc.).
+- The shadcn-admin-kit registry contains only the UI components, and relies on `ra-core`, a headless admin framework for React, to provide the logic and data fetching capabilities. For instance, the `<Resource>` component comes from `ra-core`.
+- If asked to bootstrap a new Admin, you can use the `example-admin` component from the shadcn-admin-kit registry to get a working example, configured with a sample dataProvider, which you can use as basis.
+- Shadcn Admin Kit requires a specific TS config to work: the `verbatimModuleSyntax` option must be set to `false`. See below for more details.
+
+### Fixing the TS config
+
+When you initialize a new Admin:
+
+Set the `verbatimModuleSyntax` option to `false` in the `tsconfig.app.json` file.
+
+```json
+{
+  // ...
+  "compilerOptions": {
+    // ...
+    // (keep the other options)
+    // ...
+    "verbatimModuleSyntax": false
+  }
+}
+```
+
+## Rules for using the `<Admin>` component from shadcn-admin-kit
+
+### `<Admin>` Is A Client-Side Component
+
+The `<Admin>` component from `shadcn-admin-kit` is a client-side component. Therefore, it must be either:
+
+- Used in a Single Page Application (SPA), for instance created with Vite
+- Marked with the `"use client"` directive if used in a Server-Side Rendered (SSR) application, for instance a Next.js app.
+
+### Use `<Admin>` As Root Component For the Admin Page
+
+The entry point of the admin page is the `<Admin>` component.
+
+You'll need to specify a Data Provider to let the Admin know how to fetch data from the API.
+
+If no Data Provider was specified, simply use `ra-data-json-server`, and typicode's JSONPlaceholder as endpoint: https://jsonplaceholder.typicode.com/.
+
+You will need to install the `ra-data-json-server` package first:
+
 ```bash
-make install          # Install dependencies (frontend, backend, local Supabase)
-make start            # Start full stack with real API (Supabase + Vite dev server)
-make stop             # Stop the stack
-make start-demo       # Start full-stack with FakeRest data provider
+npm install ra-data-json-server
 ```
 
-### Testing and Code Quality
+Here is an example showing how to use it:
 
-```bash
-make test             # Run unit tests (vitest)
-make typecheck        # Run TypeScript type checking
-make lint             # Run ESLint and Prettier checks
+```tsx
+"use client";
+
+import { Admin } from "@/components/admin/admin";
+import jsonServerProvider from "ra-data-json-server";
+
+const dataProvider = jsonServerProvider(
+  "https://jsonplaceholder.typicode.com/",
+);
+
+export const App = () => (
+  <Admin dataProvider={dataProvider}>{/* Resources go here */}</Admin>
+);
 ```
 
-### Building
+### Declare Resources
 
-```bash
-make build            # Build production bundle (runs tsc + vite build)
+Then, you'll need to declare the routes of the application. `<Admin>` allows to define CRUD routes (list, edit, create, show) for each resource. Use the `<Resource>` component from `ra-core` (which was automatically added to your dependencies) to define CRUD routes.
+
+For each resource, you have to specify a `name` (which will map to the resources exposed by the API endpoint) and the `list`, `edit`, `create` and `show` components to use.
+
+If you used JSONPlaceholder at the previous step, you can pick among the following 6 resources:
+
+- posts
+- comments
+- albums
+- photos
+- todos
+- users
+
+If no instruction was given on what component to use for the CRUD routes, you can use the built-in guessers for the list, show and edit views. The guessers will automatically generate code based on the data returned by the API.
+
+Here is an example of how to use the guessers with a resource named `posts`:
+
+```tsx
+"use client";
+
+import { Resource } from "ra-core";
+import jsonServerProvider from "ra-data-json-server";
+import { Admin } from "@/components/admin/admin";
+import { ListGuesser } from "@/components/admin/list-guesser";
+import { ShowGuesser } from "@/components/admin/show-guesser";
+import { EditGuesser } from "@/components/admin/edit-guesser";
+
+const dataProvider = jsonServerProvider(
+  "https://jsonplaceholder.typicode.com/",
+);
+
+export const App = () => (
+  <Admin dataProvider={dataProvider}>
+    <Resource
+      name="posts"
+      list={ListGuesser}
+      edit={EditGuesser}
+      show={ShowGuesser}
+    />
+  </Admin>
+);
 ```
 
-### Database Management
-
-The database schema is defined declaratively in `supabase/schemas/` (source of truth). Migrations in `supabase/migrations/` are auto-generated and should generally not be edited directly — but sometimes manual adjustment is needed (e.g., replacing a DROP+CREATE with an ALTER TABLE RENAME for column renames). Function definitions in `02_functions.sql` must use the exact `pg_dump` format (run `npx supabase db dump --local --schema public`) to avoid phantom diffs.
-
-```bash
-npx supabase db diff --local -f <name>  # Generate migration from schema changes
-npx supabase migration up --local       # Apply migrations locally
-npx supabase db push                    # Push migrations to remote
-npx supabase db reset --local           # Reset local database (destructive)
-```
-
-### Registry (Shadcn Components)
-
-```bash
-make registry-gen     # Generate registry.json (runs automatically on pre-commit)
-make registry-build   # Build Shadcn registry
-```
-
-## Architecture
-
-### Technology Stack
-
-- **Frontend**: React 19 + TypeScript + Vite
-- **Routing**: React Router v7
-- **Data Fetching**: React Query (TanStack Query)
-- **Forms**: React Hook Form
-- **Application Logic**: shadcn-admin-kit + ra-core (react-admin headless)
-- **UI Components**: Shadcn UI + Radix UI
-- **Styling**: Tailwind CSS v4
-- **Backend**: Supabase (PostgreSQL + REST API + Auth + Storage + Edge Functions)
-- **Testing**: Vitest
-
-### Directory Structure
-
-```
-src/
-├── components/
-│   ├── admin/              # Shadcn Admin Kit components (mutable dependency)
-│   ├── atomic-crm/         # Main CRM application code (~15,000 LOC)
-│   │   ├── activity/       # Activity logs
-│   │   ├── companies/      # Company management
-│   │   ├── contacts/       # Contact management (includes CSV import/export)
-│   │   ├── dashboard/      # Dashboard widgets
-│   │   ├── deals/          # Deal pipeline (Kanban)
-│   │   ├── filters/        # List filters
-│   │   ├── layout/         # App layout components
-│   │   ├── login/          # Authentication pages
-│   │   ├── misc/           # Shared utilities
-│   │   ├── notes/          # Note management
-│   │   ├── providers/      # Data providers (Supabase + FakeRest)
-│   │   ├── root/           # Root CRM component
-│   │   ├── sales/          # Sales team management
-│   │   ├── settings/       # Settings page
-│   │   ├── simple-list/    # List components
-│   │   ├── tags/           # Tag management
-│   │   └── tasks/          # Task management
-│   ├── supabase/           # Supabase-specific auth components
-│   └── ui/                 # Shadcn UI components (mutable dependency)
-├── hooks/                  # Custom React hooks
-├── lib/                    # Utility functions
-└── App.tsx                 # Application entry point
-
-supabase/
-├── functions/              # Edge functions (user management, inbound email)
-├── migrations/             # Database migrations (auto-generated, do not edit directly)
-└── schemas/                # Declarative schema (source of truth for DB structure)
-```
-
-### Key Architecture Patterns
-
-For more details, check out the doc/src/content/docs/developers/architecture-choices.mdx document.
-
-#### Mutable Dependencies
-
-The codebase includes mutable dependencies that should be modified directly if needed:
-- `src/components/admin/`: Shadcn Admin Kit framework code
-- `src/components/ui/`: Shadcn UI components
-
-#### Configuration via `<CRM>` Component
-
-The `src/App.tsx` file renders the `<CRM>` component, which accepts props for domain-specific configuration:
-- `contactGender`: Gender options
-- `companySectors`: Company industry sectors
-- `dealCategories`, `dealStages`, `dealPipelineStatuses`: Deal configuration
-- `noteStatuses`: Note status options with colors
-- `taskTypes`: Task type options
-- `logo`, `title`: Branding
-- `lightTheme`, `darkTheme`: Theme customization
-- `disableTelemetry`: Opt-out of anonymous usage tracking
-
-#### Database Views
-
-Complex queries are handled via database views to simplify frontend code and reduce HTTP overhead. For example, `contacts_summary` provides aggregated contact data including task counts.
-
-#### Database Triggers
-
-User data syncs between Supabase's `auth.users` table and the CRM's `sales` table via triggers (see `supabase/schemas/04_triggers.sql`).
-
-#### Edge Functions
-
-Located in `supabase/functions/`:
-- User management (creating/updating users, account disabling)
-- Inbound email webhook processing
-
-#### Data Providers
-
-Two data providers are available:
-1. **Supabase** (default): Production backend using PostgreSQL
-2. **FakeRest**: In-browser fake API for development/demos, resets on page reload
-
-When using FakeRest, database views are emulated in the frontend. Test data generators are in `src/components/atomic-crm/providers/fakerest/dataGenerator/`.
-
-#### Filter Syntax
-
-List filters follow the `ra-data-postgrest` convention with operator concatenation: `field_name@operator` (e.g., `first_name@eq`). The FakeRest adapter maps these to FakeRest syntax at runtime.
-
-## Development Workflows
-
-### Path Aliases
-
-The project uses TypeScript path aliases configured in `tsconfig.json` and `components.json`:
-- `@/components` → `src/components`
-- `@/lib` → `src/lib`
-- `@/hooks` → `src/hooks`
-- `@/components/ui` → `src/components/ui`
-
-### Adding Custom Fields
-
-When modifying contact or company data structures:
-1. Edit the relevant schema file in `supabase/schemas/` (table in `01_tables.sql`, views in `03_views.sql`, etc.)
-2. Generate a migration: `npx supabase db diff --local -f <name>`
-3. Apply it: `npx supabase migration up --local`
-4. Update the sample CSV: `src/components/atomic-crm/contacts/contacts_export.csv`
-5. Update the import function: `src/components/atomic-crm/contacts/useContactImport.tsx`
-6. If using FakeRest, update data generators in `src/components/atomic-crm/providers/fakerest/dataGenerator/`
-7. Don't forget to update the related view (`contacts_summary`, `companies_summary`) in `03_views.sql`
-8. Don't forget the export functions
-9. Don't forget the contact merge logic
-
-### Running with Test Data
-
-Import `test-data/contacts.csv` via the Contacts page → Import button.
-
-### Git Hooks
-
-- Pre-commit: Automatically runs `make registry-gen` to update `registry.json`
-
-### Accessing Local Services During Development
-
-- Frontend: http://localhost:5173/
-- Supabase Dashboard: http://localhost:54323/
-- REST API: http://127.0.0.1:54321
-- Storage (attachments): http://localhost:54323/project/default/storage/buckets/attachments
-- Inbucket (email testing): http://localhost:54324/
-
-## Important Notes
-
-- The codebase is intentionally small (~15,000 LOC in `src/components/atomic-crm`) for easy customization
-- Modify files in `src/components/admin` and `src/components/ui` directly - they are meant to be customized
-- Unit tests can be added in the `src/` directory (test files are named `*.test.ts` or `*.test.tsx`)
-- User deletion is not supported to avoid data loss; use account disabling instead
-- Filter operators must be supported by the `supabaseAdapter` when using FakeRest
+Use the example above to generate the component code and adapt the resources to your needs.

@@ -1,5 +1,5 @@
 import { useFieldValue, useRecordContext, useTranslate } from "ra-core";
-import type { FileFieldProps } from "@/components/admin";
+import type { FileFieldProps } from "@/components/admin/file-field";
 import { cn } from "@/lib/utils";
 
 /**

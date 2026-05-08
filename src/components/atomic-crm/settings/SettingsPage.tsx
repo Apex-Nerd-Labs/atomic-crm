@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import { RotateCcw, Save } from "lucide-react";
 import type { RaRecord } from "ra-core";
 import {

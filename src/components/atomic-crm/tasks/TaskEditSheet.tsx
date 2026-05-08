@@ -1,4 +1,4 @@
-import { ReferenceField } from "@/components/admin";
+import { ReferenceField } from "@/components/admin/reference-field";
 import type { Identifier } from "ra-core";
 import { useGetRecordRepresentation, useTranslate } from "ra-core";
 import { EditSheet } from "../misc/EditSheet";

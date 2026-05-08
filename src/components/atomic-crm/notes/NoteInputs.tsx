@@ -14,7 +14,8 @@ import { useConfigurationContext } from "../root/ConfigurationContext";
 import { getCurrentDate } from "./utils";
 import { AttachmentField } from "./AttachmentField";
 import { foreignKeyMapping } from "./foreignKeyMapping";
-import { AutocompleteInput, ReferenceInput } from "@/components/admin";
+import { AutocompleteInput } from "@/components/admin/autocomplete-input";
+import { ReferenceInput } from "@/components/admin/reference-input";
 import { contactOptionText } from "../misc/ContactOption";
 import { validateNoteOrAttachmentRequired } from "./noteModel";
 

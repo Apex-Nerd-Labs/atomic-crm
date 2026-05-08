@@ -14,7 +14,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Spinner } from "@/components/ui/spinner";
-import { FileField, FileInput } from "@/components/admin";
+import { FileField } from "@/components/admin/file-field";
+import { FileInput } from "@/components/admin/file-input";
 import {
   type ImportFromJsonErrorState,
   type ImportFromJsonFailures,

@@ -66,8 +66,6 @@ export const ArrayInput = (props: ArrayInputProps) => {
   const parentSourceContext = useSourceContext();
   const finalSource = parentSourceContext.getSource(arraySource);
 
-  const labelId = React.useId();
-
   if (isPending) {
     return <Skeleton className="w-full h-9" />;
   }
@@ -80,12 +78,10 @@ export const ArrayInput = (props: ArrayInputProps) => {
         className,
         "w-full flex flex-col gap-2",
       )}
-      aria-labelledby={labelId}
-      role="group"
       name={finalSource}
       {...sanitizeInputRestProps(rest)}
     >
-      <Label className="text-sm" id={labelId}>
+      <Label className="text-muted-foreground text-sm">
         <FieldTitle
           label={label}
           source={arraySource}
@@ -103,8 +99,10 @@ export const ArrayInput = (props: ArrayInputProps) => {
   );
 };
 
-export interface ArrayInputProps
-  extends Omit<InputProps, "disabled" | "readOnly"> {
+export interface ArrayInputProps extends Omit<
+  InputProps,
+  "disabled" | "readOnly"
+> {
   className?: string;
   children: React.ReactNode;
   isFetching?: boolean;

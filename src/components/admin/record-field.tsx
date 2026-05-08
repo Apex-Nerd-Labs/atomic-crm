@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ReactNode, ElementType, HTMLAttributes } from "react";
 import { createElement } from "react";
 import type { ExtractRecordPaths, HintedString } from "ra-core";

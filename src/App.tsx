@@ -24,6 +24,10 @@ import { CRM } from "@/components/atomic-crm/root/CRM";
  *    />
  * );
  */
-const App = () => <CRM />;
+const App = () => <CRM 
+    darkModeLogo="./img/dark_logo.png"
+    lightModeLogo="./img/light_logo.png"
+    title="APEX Nerd Labs"
+/>;
 
 export default App;

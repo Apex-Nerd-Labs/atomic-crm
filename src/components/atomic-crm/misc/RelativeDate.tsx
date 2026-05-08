@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import { differenceInDays, formatRelative } from "date-fns";
 import { enUS, fr } from "date-fns/locale";
 import { useLocaleState } from "ra-core";

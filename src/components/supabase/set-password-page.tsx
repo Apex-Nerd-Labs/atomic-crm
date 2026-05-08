@@ -1,5 +1,4 @@
 import { useState } from "react";
-import type { ValidateForm } from "ra-core";
 import { Form, required, useNotify, useTranslate } from "ra-core";
 import { useSetPassword, useSupabaseAccessToken } from "ra-supabase-core";
 import type { FieldValues, SubmitHandler } from "react-hook-form";
@@ -24,7 +23,9 @@ export const SetPasswordPage = () => {
   const translate = useTranslate();
   const [, { mutateAsync: setPassword }] = useSetPassword();
 
-  const validate = (values: FormData) => {
+  const validate = (
+    values: FormData,
+  ): Partial<Record<keyof FormData, string>> => {
     if (values.password !== values.confirmPassword) {
       return {
         password: "ra-supabase.validation.password_mismatch",
@@ -89,7 +90,10 @@ export const SetPasswordPage = () => {
       <Form<FormData>
         className="space-y-8"
         onSubmit={submit as SubmitHandler<FieldValues>}
-        validate={validate as ValidateForm}
+        // react-hook-form's form-level `validate` type collides with ra-core's;
+        // runtime uses ra-core's getSimpleValidationResolver(simpleValues).
+        // @ts-expect-error Intersection ValidateForm (RHF) & ValidateForm (ra-core) is unsatisfiable
+        validate={validate}
       >
         <TextInput
           label={translate("ra.auth.password", {

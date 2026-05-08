@@ -14,7 +14,7 @@ import {
   useTranslate,
 } from "ra-core";
 import type { ComponentProps, ReactElement } from "react";
-import { useCallback, useEffect, useId } from "react";
+import { useCallback, useEffect } from "react";
 
 import { FormError, FormField, FormLabel } from "@/components/admin/form";
 import { InputHelperText } from "@/components/admin/input-helper-text";
@@ -144,7 +144,6 @@ export const SelectInput = (props: SelectInputProps) => {
     createValue,
     createHintValue,
   });
-  const labelId = useId();
   const { id, field, isRequired } = useInput({
     alwaysOn,
     defaultValue,
@@ -213,7 +212,7 @@ export const SelectInput = (props: SelectInputProps) => {
         className={cn("w-full min-w-20", className)}
       >
         {label !== "" && label !== false && (
-          <FormLabel id={labelId}>
+          <FormLabel>
             <FieldTitle
               label={label}
               source={source}
@@ -252,7 +251,7 @@ export const SelectInput = (props: SelectInputProps) => {
         {...rest}
       >
         {label !== "" && label !== false && (
-          <FormLabel id={labelId}>
+          <FormLabel>
             <FieldTitle
               label={label}
               source={source}
@@ -274,7 +273,6 @@ export const SelectInput = (props: SelectInputProps) => {
             <SelectTrigger
               className={cn("w-full transition-all hover:bg-accent")}
               disabled={field.disabled}
-              aria-labelledby={labelId}
             >
               <SelectValue placeholder={renderEmptyItemOption()} />
 

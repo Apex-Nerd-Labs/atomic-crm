@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import get from "lodash/get";
 import * as React from "react";
 import type { ReactElement } from "react";
@@ -248,8 +247,7 @@ export const SimpleFormIteratorItem = React.forwardRef(
   },
 );
 
-export interface SimpleFormIteratorItemProps
-  extends SimpleFormIteratorItemBaseProps {
+export interface SimpleFormIteratorItemProps extends SimpleFormIteratorItemBaseProps {
   disabled?: boolean;
   disableRemove?: boolean | SimpleFormIteratorDisableRemoveFunction;
   disableReordering?: boolean;
@@ -289,7 +287,6 @@ export const AddItemButton = (props: React.ComponentProps<"button">) => {
             variant="ghost"
             size="icon"
             onClick={() => add()}
-            aria-label={translate("ra.action.add")}
             className={cn("button-add", `button-add-${source}`, className)}
             {...rest}
           >

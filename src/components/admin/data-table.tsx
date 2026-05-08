@@ -57,6 +57,7 @@ import {
   BulkActionsToolbar,
   BulkActionsToolbarChildren,
 } from "@/components/admin/bulk-actions-toolbar";
+import { NoInfer } from "@tanstack/react-query";
 
 const defaultBulkActionButtons = <BulkActionsToolbarChildren />;
 
@@ -507,7 +508,11 @@ export function DataTableNumberColumn<
       headerClassName={cn("text-right", headerClassName)}
       cellClassName={cn("text-right", cellClassName)}
     >
-      <NumberField source={source} options={options} locales={locales} />
+      <NumberField
+        source={source as ExtractRecordPaths<RecordType>}
+        options={options}
+        locales={locales}
+      />
     </DataTableColumn>
   );
 }

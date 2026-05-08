@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { HTMLAttributes } from "react";
 import get from "lodash/get.js";
 import {
@@ -93,8 +92,8 @@ ImageField.displayName = "ImageField";
 
 export interface ImageFieldProps<
   RecordType extends Record<string, any> = Record<string, any>,
-> extends FieldProps<RecordType>,
-    HTMLAttributes<HTMLSpanElement> {
+>
+  extends FieldProps<RecordType>, HTMLAttributes<HTMLSpanElement> {
   defaultValue?: any;
   src?: string;
   title?: HintedString<ExtractRecordPaths<RecordType>>;

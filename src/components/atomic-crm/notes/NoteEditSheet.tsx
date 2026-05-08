@@ -7,7 +7,7 @@ import {
   useRecordContext,
   useTranslate,
 } from "ra-core";
-import { ReferenceField } from "@/components/admin";
+import { ReferenceField } from "@/components/admin/reference-field";
 import {
   DropdownMenu,
   DropdownMenuContent,

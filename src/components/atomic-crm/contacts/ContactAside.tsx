@@ -1,6 +1,6 @@
 import { useRecordContext, useTranslate } from "ra-core";
 import { EditButton } from "@/components/admin/edit-button";
-import { DeleteButton } from "@/components/admin";
+import { DeleteButton } from "@/components/admin/delete-button";
 import { ReferenceManyField } from "@/components/admin/reference-many-field";
 import { ShowButton } from "@/components/admin/show-button";
 

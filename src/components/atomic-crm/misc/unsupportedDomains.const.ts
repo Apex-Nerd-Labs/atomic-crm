@@ -1,4 +1,3 @@
-// If you want to add more domains to the list, you can do so by adding them to the DOMAINS_NOT_SUPPORTING_FAVICON array.
 export const DOMAINS_NOT_SUPPORTING_FAVICON = [
   "gmail.com",
   "yahoo.com",

@@ -7,7 +7,8 @@ import {
   ValidationError,
   RecordContextProvider,
 } from "ra-core";
-import { AutocompleteInput, ReferenceInput } from "@/components/admin";
+import { AutocompleteInput } from "@/components/admin/autocomplete-input";
+import { ReferenceInput } from "@/components/admin/reference-input";
 import { FileInputPreview } from "@/components/admin/file-input";
 import { useFormContext, useWatch } from "react-hook-form";
 
